@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trabalhe Conosco - Gourmetify</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>TRABALHE CONOSCO</h1>
+        <p class="descricao">Na Gourmetify, nossa equipe é o que nos move! Valorizamos cada colaborador e buscamos pessoas que queiram crescer junto com a empresa. Se você é comprometido, gosta de desafios e acredita no poder do trabalho em equipe, seu lugar é aqui.</p>
+        
+        <h2>Entre em contato com a nossa equipe!</h2>
+        
+        <form id="formCandidatura">
+            <input type="text" name="nome" placeholder="Nome" required>
+            
+            <div class="linha">
+                <input type="email" name="email" placeholder="Email" required>
+                <input type="tel" name="telefone" placeholder="Telefone">
+            </div>
+            
+            <input type="text" name="assunto" placeholder="Assunto" required>
+            
+            <textarea name="mensagem" placeholder="Mensagem" required></textarea>
+            
+            <button type="submit">Enviar</button>
+        </form>
+        
+        <div id="msg"></div>
+    </div>
+
+    <script>
+        document.getElementById('formCandidatura').onsubmit = async (e) => {
+            e.preventDefault();
+            
+            const formData = new FormData(e.target);
+            const data = Object.fromEntries(formData);
+            const btn = e.target.querySelector('button');
+            
+            btn.disabled = true;
+            btn.textContent = 'Enviando...';
+            
+            try {
+                const response = await fetch('http://localhost:3000/candidatura', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({
+                        nome,
+                        email,
+                        telefone,
+                        assunto,
+                        mensagem
+                    })
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    document.getElementById('msg').textContent = 'Candidatura enviada com sucesso!';
+                    document.getElementById('msg').className = 'sucesso';
+                    e.target.reset();
+                } else {
+                    document.getElementById('msg').textContent = 'Erro ao enviar candidatura.';
+                    document.getElementById('msg').className = 'erro';
+                }
+            } catch (error) {
+                document.getElementById('msg').textContent = 'Erro de conexão.';
+                document.getElementById('msg').className = 'erro';
+            }
+            
+            btn.disabled = false;
+            btn.textContent = 'Enviar';
+        };
+    </script>
+</body>
+</html>
